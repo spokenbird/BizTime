@@ -22,12 +22,14 @@ router.get("/", async function (req, res, next) {
 router.get("/:code", async function (req, res, next) {
   try {
     const code = req.params.code;
-    const results = await db.query(
+    const result = await db.query(
       `SELECT code, name, description
       FROM companies
       WHERE code=$1`, [code]);
-
-    return res.json(results.rows[0]);
+    if (!result.rows.length) {
+      throw new ExpressError(`No company was found for code ${req.params.code}`, 404);
+    }
+    return res.json(result.rows[0]);
   }
   catch (err) {
     return next(err);
@@ -42,10 +44,12 @@ router.post("/", async function (req, res, next) {
       VALUES ($1, $2, $3)
       RETURNING code, name, description`, [code, name, description]
     );
-
     return res.status(201).json(result.rows[0]);
   }
   catch (err) {
+    if (err.detail.includes("already exists")) {
+      err = new ExpressError(`Company already exists.`, 404)
+    }
     return next(err);
   }
 });
