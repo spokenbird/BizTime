@@ -19,6 +19,7 @@ router.get("/", async function (req, res, next) {
   }
 });
 
+
 router.get("/:code", async function (req, res, next) {
   try {
     const compCode = req.params.code;
@@ -32,8 +33,6 @@ router.get("/:code", async function (req, res, next) {
        FROM invoices
        WHERE comp_code=$1
       `, [compCode])
-
-    
     if (!companyResult.rows.length) {
       throw new ExpressError(`No company was found for code ${req.params.code}`, 404);
     }
@@ -44,6 +43,7 @@ router.get("/:code", async function (req, res, next) {
     return next(err);
   }
 });
+
 
 router.post("/", async function (req, res, next) {
   try {
@@ -63,6 +63,7 @@ router.post("/", async function (req, res, next) {
   }
 });
 
+
 router.put("/:code", async function (req, res, next) {
   try {
     const { name, description } = req.body;
@@ -80,6 +81,7 @@ router.put("/:code", async function (req, res, next) {
     return next(err);
   }
 });
+
 
 router.delete("/:code", async function (req, res, next) {
   try {

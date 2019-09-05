@@ -19,6 +19,7 @@ router.get('/', async function (req, res, next) {
   }
 })
 
+
 router.get('/:id', async function (req, res, next) {
   try {
     const id = req.params.id
@@ -50,20 +51,16 @@ router.get('/:id', async function (req, res, next) {
   }
 })
 
+
 router.post('/', async function (req, res, next) {
   try {
-    const {
-      comp_code,
-      amt
-    } = req.body;
-
+    const { comp_code, amt } = req.body;
     const result = await db.query(`
       INSERT INTO invoices
       (comp_code, amt)
       VALUES ($1, $2)
       RETURNING id, amt, paid, add_date, paid_date
     `, [comp_code, amt])
-
     return res.json({
       invoice: result.rows[0]
     }, 201)
@@ -72,10 +69,10 @@ router.post('/', async function (req, res, next) {
   }
 })
 
+
 router.put('/:id', async function (req, res, next) {
   try {
     const amt = req.body.amt
-
     const result = await db.query(`
       UPDATE invoices SET amt=$1
       WHERE id=$2
@@ -90,13 +87,13 @@ router.put('/:id', async function (req, res, next) {
   }
 })
 
+
 router.delete('/:id', async function(req, res, next){
   try {
       const result = await db.query(`
       DELETE FROM invoices
       WHERE id=$1
     `, [req.params.id])
-
     if (!result.rowCount) {
       throw new ExpressError(`No invoice was found`, 404);
     }
